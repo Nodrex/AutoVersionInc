@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import org.eclipse.jgit.api.CommitCommand;
+import org.eclipse.jgit.api.Git;
 
 /**
  * This class is used to parse Android's build.grade file and automatically increase build version numbers.
@@ -40,7 +42,9 @@ public class AutoVersionInc {
             System.out.println("Git pre commmit hook finished :)");
             System.out.println("continuing commit...");  
             
-            //TODO need to commit from java code withoud hook 
+            Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
+            CommitCommand commit = git.commit();
+            commit.setNoVerify(true).setMessage("some commit message from java himself").call();
         } catch (Exception e) {
             System.out.println("Unfortunately there was some error while trying to pars build gradle file: " + e.toString());
             System.exit(1);
