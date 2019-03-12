@@ -10,7 +10,7 @@ import java.nio.file.Paths;
  * @author Nodrex
  */
 public class AutoVersionInc {
-    public static final String PATH = "F:\\netbeansPorjects\\AutoVersionInc\\build.gradle";//shoule be relative and given from args
+    public static final String PATH = "build.gradle";//shoule be relative and given from args   //working file and AutoVersionInc should be in one folder
     public static final String VAR_NAME_0 = "versionBuild";//should be given from args
     public static final String VAR_NAME_1 = "aztelekomVersionCode";//shoueld be given from args
     
