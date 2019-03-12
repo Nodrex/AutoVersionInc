@@ -18,7 +18,7 @@ public class AutoVersionInc {
 
     public static void main(String args[]) {
         if(args == null || args.length < 2) {
-            System.out.println("given args are empty or it is not enough: args shoudl be at list 2. first always should be file name which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value shoudl be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enaf args!!!");
+            System.out.println("given args are empty or it is not enough: args shoudl be at list 2. first always should be file name(maby full path) which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value shoudl be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enaf args!!!");
             System.exit(1);
         }
         parsAndIncreasVersion(args);
@@ -26,7 +26,7 @@ public class AutoVersionInc {
 
     public static void parsAndIncreasVersion(String args[]) {
         try {
-            System.out.println("Git pre commmit hook started (keep in mind that this jar and working file should be in same folder!)...");
+            System.out.println("Git pre commmit hook started...");
             String fileName = args[0];
             String data = new String(Files.readAllBytes(Paths.get(fileName)));
             
