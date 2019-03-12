@@ -1,0 +1,9 @@
+apply plugin: 'com.android.application'
+
+
+android {
+
+    def versionBuild = 413
+    def aztelekomVersionCode = 131
+
+}
