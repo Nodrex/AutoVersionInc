@@ -19,6 +19,15 @@ public class AutoVersionInc {
     public static final String EMPTY_STRING = "";
 
     public static void main(String args[]) {
+        
+        try{
+       
+            Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
+        }catch(Exception e){
+            System.out.println("E: " + e.toString());
+        }
+        
+        
         if(args == null || args.length < 2) {
             System.out.println("given args are empty or it is not enough: args shoudl be at list 2. first always should be file name(maby full path) which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value shoudl be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enaf args!!!");
             System.exit(1);
