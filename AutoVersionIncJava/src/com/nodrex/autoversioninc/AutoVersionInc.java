@@ -8,59 +8,62 @@ import java.nio.file.Paths;
 /**
  * This class is used to parse Android's build.grade file and automatically increase build version numbers.
  * @author Nodrex
+ * @version 1.0
+ * @since 2019
  */
 public class AutoVersionInc {
-    public static final String PATH = "build.gradle";//shoule be relative and given from args   //working file and AutoVersionInc should be in one folder
-    public static final String VAR_NAME_0 = "versionBuild";//should be given from args
-    public static final String VAR_NAME_1 = "aztelekomVersionCode";//shoueld be given from args
     
     public static final String NEW_LINE = "\n";
     public static final String EMPTY_STRING = "";
 
     public static void main(String args[]) {
-        //TODO read values from args
-        parsAndIncreasVersion(PATH);
+        if(args == null || args.length < 2) {
+            System.out.println("given args are empty or it is not enough: args shoudl be at list 2. first always should be file name which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value shoudl be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enaf args!!!");
+            System.exit(1);
+        }
+        parsAndIncreasVersion(args);
     }
 
-    public static void parsAndIncreasVersion(String fileName) {
+    public static void parsAndIncreasVersion(String args[]) {
         try {
-            System.out.println("Git pre commmit hook started (this jar and working fiel should be in same folder!)...");
+            System.out.println("Git pre commmit hook started (keep in mind that this jar and working file should be in same folder!)...");
+            String fileName = args[0];
             String data = new String(Files.readAllBytes(Paths.get(fileName)));
-            if (data == null) {
-                System.out.print("unfortunately can not retreiev given file");
-                return;
-            }
+            
+            data = go(data, args);
 
-            data = go(data, VAR_NAME_0, VAR_NAME_1);
-
-            FileOutputStream fileOut = new FileOutputStream(new File(PATH));
+            FileOutputStream fileOut = new FileOutputStream(new File(fileName));
             fileOut.write(data.getBytes());
             fileOut.close();
 
             System.out.println("given file was repleced with increasd version!");
-            System.out.println("Git pre commmit hook finished :\\)");
+            System.out.println("Git pre commmit hook finished :)");
             System.out.println("continuing commit...");  
             
             //TODO need to commit from java code withoud hook 
         } catch (Exception e) {
             System.out.println("Unfortunately there was some error while trying to pars build gradle file: " + e.toString());
+            System.exit(1);
         }
     }
 
-    private static String go(String data, String... vars) {
-        if (vars == null || vars.length <= 0) return null;
-        for (String varName : vars) {
-            if (varName == null || EMPTY_STRING.equals(varName)) continue;
+    private static String go(String data, String args[]) {
+        for (int i= 1; i< args.length; i++) {
+            String varName = args[i]; 
             System.out.println("Trying to increase " + varName + " number ...");
             int index = data.indexOf(varName);
+            if(index < 0) {
+                System.out.println("Can not find " + varName + " in file, so skipping" );
+                continue;
+            }
             String var = data.substring(index);
             var = var.substring(0, var.indexOf(NEW_LINE));
 
             int lastIndex = var.length();
             int value = 0;
-            for (int i = var.length() - 4; i < lastIndex; i++) {
+            for (int j = var.length() - 4; j < lastIndex; j++) {
                 try {
-                    String sub = var.substring(i, lastIndex - 1);
+                    String sub = var.substring(j, lastIndex - 1);
                     sub = sub.trim();
                     value = Integer.valueOf(sub);
                     break;
