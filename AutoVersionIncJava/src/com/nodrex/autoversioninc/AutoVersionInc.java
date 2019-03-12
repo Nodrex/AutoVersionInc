@@ -24,7 +24,7 @@ public class AutoVersionInc {
 
     public static void parsAndIncreasVersion(String fileName) {
         try {
-            System.out.println("Git pre commmit hook started...");
+            System.out.println("Git pre commmit hook started (this jar and working fiel should be in same folder!)...");
             String data = new String(Files.readAllBytes(Paths.get(fileName)));
             if (data == null) {
                 System.out.print("unfortunately can not retreiev given file");
