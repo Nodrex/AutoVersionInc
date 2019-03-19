@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.lib.PersonIdent;
 
 /**
  * This class is used to parse Android's build.grade file and automatically increase build version numbers.
@@ -65,6 +66,7 @@ public class AutoVersionInc {
             //TODO misamartebi args indan unda waikitxos
             Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
             CommitCommand commit = git.commit();
+            commit.setCommitter("Nodrex", "nodrexfeedback@gmail.com");//should be from args
             commit.setOnly("someInnerProjectTest/build.gradle"); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
             commit.setMessage("increasted build version");
