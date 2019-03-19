@@ -66,11 +66,15 @@ public class AutoVersionInc {
             //TODO misamartebi args indan unda waikitxos
             Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
             CommitCommand commit = git.commit();
-            commit.setCommitter("Nodrex", "nodrexfeedback@gmail.com");//should be from args
+            System.out.println("get commit...");  
             commit.setOnly("someInnerProjectTest/build.gradle"); //aucileblad gayofit unda gadaeces da ara sleshit!
+            System.out.println("set file to commit");  
             commit.setNoVerify(true);
+            System.out.println("disable pre commit hook");
             commit.setMessage("increasted build version");
+            System.out.println("commit message set");
             commit.call();
+            System.out.println("commit finished!");
         } catch (Exception e) {
             System.out.println("Unfortunately there was some error while trying to pars build gradle file: " + e.toString());
             System.exit(1);
