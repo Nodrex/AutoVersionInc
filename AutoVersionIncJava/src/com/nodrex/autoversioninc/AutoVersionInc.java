@@ -19,18 +19,22 @@ public class AutoVersionInc {
     public static final String EMPTY_STRING = "";
 
     public static void main(String args[]) {
-        
-        try{
        
+        /*
+        try{
             Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
             CommitCommand commit = git.commit();
-            commit.setAll(true);
-            commit.setNoVerify(true).setMessage("some commit message from java himself, second try").call();
+            
+            commit.setOnly("someInnerProjectTest/build.gradle")  ;
+            commit.setNoVerify(true);
+            commit.setMessage("some commit message from java himself, trying 4");
+            commit.call();
             System.out.println("commit from java finished!");
             System.exit(0);
         }catch(Exception e){
             System.out.println("E: " + e.toString());
         }
+        */
         
         
         if(args == null || args.length < 2) {
@@ -56,9 +60,13 @@ public class AutoVersionInc {
             System.out.println("Git pre commmit hook finished :)");
             System.out.println("continuing commit...");  
             
+            //TODO misamartebi args indan unda waikitxos
             Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
             CommitCommand commit = git.commit();
-            commit.setNoVerify(true).setMessage("some commit message from java himself").call();
+            commit.setOnly("someInnerProjectTest/build.gradle"); //aucileblad gayofit unda gadaeces da ara sleshit!
+            commit.setNoVerify(true);
+            commit.setMessage("increasted build version");
+            commit.call();
         } catch (Exception e) {
             System.out.println("Unfortunately there was some error while trying to pars build gradle file: " + e.toString());
             System.exit(1);
