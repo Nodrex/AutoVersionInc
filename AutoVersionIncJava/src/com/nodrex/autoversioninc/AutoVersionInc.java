@@ -22,7 +22,7 @@ public class AutoVersionInc {
         //args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"};
         //abouv code is for testing purposes only and shoudl be commented on prod version
         
-        System.exit(1);
+        //System.exit(1);
         
         /*
         try{
