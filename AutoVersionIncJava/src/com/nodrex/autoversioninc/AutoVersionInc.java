@@ -19,7 +19,9 @@ public class AutoVersionInc {
     public static final String EMPTY_STRING = "";
 
     public static void main(String args[]) {
-       
+        //args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"};
+        //abouv code is for testing purposes only and shoudl be commented on prod version
+        
         /*
         try{
             Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
