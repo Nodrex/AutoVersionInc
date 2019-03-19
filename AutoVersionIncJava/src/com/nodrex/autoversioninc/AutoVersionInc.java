@@ -2,8 +2,11 @@ package com.nodrex.autoversioninc;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.PersonIdent;
@@ -20,7 +23,7 @@ public class AutoVersionInc {
     public static final String EMPTY_STRING = "";
 
     public static void main(String args[]) {
-        //args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"};
+        args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"};
         //abouv code is for testing purposes only and shoudl be commented on prod version
         
         /*
@@ -63,7 +66,29 @@ public class AutoVersionInc {
             System.out.println("Git pre commmit hook finished :)");
             System.out.println("continuing commit...");  
             
-            //TODO misamartebi args indan unda waikitxos
+            
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println("strat delay");  
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException ex) {}
+                    System.out.println("delay ended");
+                    commitChangedFile();
+                }
+            }).start();
+            
+            //commitChangedFile();
+        } catch (Exception e) {
+            System.out.println("Unfortunately there was some error while trying to pars build gradle file: " + e.toString());
+            System.exit(1);
+        }
+    }
+    
+    private static void commitChangedFile(){
+        //TODO misamartebi args indan unda waikitxos
+        try {
             Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
             CommitCommand commit = git.commit();
             System.out.println("get commit...");  
@@ -76,7 +101,7 @@ public class AutoVersionInc {
             commit.call();
             System.out.println("commit finished!");
         } catch (Exception e) {
-            System.out.println("Unfortunately there was some error while trying to pars build gradle file: " + e.toString());
+            System.out.println("Unfortunately problem in commit from java: " + e.toString());
             System.exit(1);
         }
     }
