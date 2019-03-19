@@ -2,14 +2,10 @@ package com.nodrex.autoversioninc;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
-import org.eclipse.jgit.lib.PersonIdent;
 
 /**
  * This class is used to parse Android's build.grade file and automatically increase build version numbers.
@@ -67,17 +63,17 @@ public class AutoVersionInc {
             System.out.println("continuing commit...");  
             
             
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    System.out.println("strat delay");  
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException ex) {}
-                    System.out.println("delay ended");
-                    commitChangedFile();
-                }
-            }).start();
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    System.out.println("strat delay");  
+//                    try {
+//                        Thread.sleep(10000);
+//                    } catch (InterruptedException ex) {}
+//                    System.out.println("delay ended");
+//                    commitChangedFile();
+//                }
+//            }).start();
             
             //commitChangedFile();
         } catch (Exception e) {
