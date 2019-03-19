@@ -23,6 +23,11 @@ public class AutoVersionInc {
         try{
        
             Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
+            CommitCommand commit = git.commit();
+            commit.setAll(true);
+            commit.setNoVerify(true).setMessage("some commit message from java himself, second try").call();
+            System.out.println("commit from java finished!");
+            System.exit(0);
         }catch(Exception e){
             System.out.println("E: " + e.toString());
         }
