@@ -17,4 +17,4 @@ fi
 
 
 
-#copy this content into pre-commit hook file
+#copy this file into .git/hooks
