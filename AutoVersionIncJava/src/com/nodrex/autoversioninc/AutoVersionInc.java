@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Set;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 
 /**
@@ -96,14 +98,28 @@ public class AutoVersionInc {
     }
     
     private static void commitChangedFile(String[] args){
+        String repo = args[1];
+        String file = args[2];
         try {
-            System.out.println("trying to commit file...");
-            String repo = args[1];
-            System.out.println("repo: " + repo);
-            String file = args[2];
-            System.out.println("file: " + file);
             Git git = Git.open(new File(repo));
-            System.out.println("branch: " + git.branchList().call().get(0).getName());
+            Status status = git.status().call();
+            Set<String> changes = status.getUncommittedChanges();
+            if(changes.size() <= 0) {
+                //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
+                System.exit(0);
+            }
+           
+            /*
+            for (String s : changes) {
+                if(s.equalsIgnoreCase(file)) break;
+                System.out.println(s);
+            }
+            */
+            
+            System.out.println("post commit started");
+            System.out.println("trying to commit file...");
+            printData(repo, file);
+            System.out.println("branch: " + git.getRepository().getBranch());
             CommitCommand commit = git.commit();
             commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
@@ -111,16 +127,21 @@ public class AutoVersionInc {
             commit.setMessage("increased build version");
             commit.call();
             System.out.println("commit finished!");
-            System.exit(0);
-        }catch (JGitInternalException jgie){
+        } catch (JGitInternalException jgie){
             System.out.println("Unfortunately problem in commit from java: " + jgie.toString());
+            printData(repo, file);
             System.out.println(jgie.getCause().getMessage());
             System.out.println(jgie.getMessage());
-            System.exit(1);
         } catch (Exception e) {
             System.out.println("Unfortunately problem in commit from java: " + e.toString());
-            System.exit(1);
+            printData(repo, file);
         }
+    }
+    
+    private static void printData(String repo, String file){
+        System.out.println("Given params to commit:");
+        System.out.println("repo: " + repo);
+        System.out.println("file: " + file);
     }
     
 }
