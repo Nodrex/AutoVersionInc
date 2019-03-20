@@ -21,34 +21,19 @@ public class AutoVersionInc {
     public static final String COMMIT_STR_COMMAND = "commit";
     
     public static void main(String args[]) {
-        //args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"};
+        //args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"}; //to test parsing and version inc
+        //args = new String[]{"commit", "F:\\netbeansPorjects\\AutoVersionInc", "someInnerProjectTest/build.gradle"}; //to test commit from git
         //abouv code is for testing purposes only and shoudl be commented on prod version
-        
-        /*
-        try{
-            Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
-            CommitCommand commit = git.commit();
-            
-            commit.setOnly("someInnerProjectTest/build.gradle")  ;
-            commit.setNoVerify(true);
-            commit.setMessage("some commit message from java himself, trying 4");
-            commit.call();
-            System.out.println("commit from java finished!");
-            System.exit(0);
-        }catch(Exception e){
-            System.out.println("E: " + e.toString());
-        }
-        */
         
         if(args == null || args.length <= 0){
             System.out.println(
                     "Given args are empty or it is not enough: args shoudl be at list 2. first always should be file name(maby full path) which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value shoudl be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enaf args!!!\n"
-                    + "or args shoudl be at list 3. first commit xomand to detect that commit is needed, second repo path and third should be file path , which should be commited!!!\n");
+                    + "or args shoudl be at list 3. first commit comand to detect that commit is needed, second repo path and third should be file path , which should be commited!!!\n");
             System.exit(1);
         }
         if(args[0].equalsIgnoreCase(COMMIT_STR_COMMAND)){
             if(args.length < 3){
-                System.out.println("Given args shoudl be at list 3. first commit xomand to detect that commit is needed, second repo path and third should be file path , which should be commited!!!\n");
+                System.out.println("Given args shoudl be at list 3. first commit comand to detect that commit is needed, second repo path and third should be file path , which should be commited!!!\n");
                 System.exit(1);
             }
             commitChangedFile(args);
@@ -101,9 +86,9 @@ public class AutoVersionInc {
                 } catch (NumberFormatException e) {}
             }
 
-            System.out.println("current vallue which will be commited: " + value);
+            System.out.println("current vallue: " + value);
             int newValue = value + 1;
-            System.out.println("new vallue which will be commited on next commit: " + newValue);
+            System.out.println("new vallue which will be commited: " + newValue);
             String newVar = var.replace(String.valueOf(value), String.valueOf(newValue));
             data = data.replace(var, newVar);
         }
@@ -112,26 +97,26 @@ public class AutoVersionInc {
     
     private static void commitChangedFile(String[] args){
         try {
-            
-            //1 repository
-            //2 file
-            
-            Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
-            System.out.println("git branch: " + git.branchList().call().get(0));
+            System.out.println("trying to commit file...");
+            String repo = args[1];
+            System.out.println("repo: " + repo);
+            String file = args[2];
+            System.out.println("file: " + file);
+            Git git = Git.open(new File(repo));
+            System.out.println("branch: " + git.branchList().call().get(0));
             CommitCommand commit = git.commit();
-            System.out.println("get commit...");  
-            commit.setOnly("someInnerProjectTest/build.gradle"); //aucileblad gayofit unda gadaeces da ara sleshit!
-            System.out.println("set file to commit");  
+            commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
             System.out.println("disable pre commit hook");
-            commit.setMessage("increasted build version");
-            System.out.println("commit message set");
+            commit.setMessage("increased build version");
             commit.call();
             System.out.println("commit finished!");
+            System.exit(0);
         }catch (JGitInternalException jgie){
             System.out.println("Unfortunately problem in commit from java: " + jgie.toString());
             System.out.println(jgie.getCause().getMessage());
             System.out.println(jgie.getMessage());
+            System.exit(1);
         } catch (Exception e) {
             System.out.println("Unfortunately problem in commit from java: " + e.toString());
             System.exit(1);
