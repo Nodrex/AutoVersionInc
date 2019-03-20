@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 
 android {
 
-    def versionBuild = 478
-    def aztelekomVersionCode = 194
+    def versionBuild = 479
+    def aztelekomVersionCode = 195
 
 }
