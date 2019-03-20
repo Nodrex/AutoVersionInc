@@ -19,7 +19,7 @@ public class AutoVersionInc {
     public static final String EMPTY_STRING = "";
 
     public static void main(String args[]) {
-        //args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"};
+        args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"};
         //abouv code is for testing purposes only and shoudl be commented on prod version
         
         //System.exit(1);
@@ -88,6 +88,7 @@ public class AutoVersionInc {
         //TODO misamartebi args indan unda waikitxos
         try {
             Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
+            System.out.println("git branch: " + git.branchList().call().get(0));
             CommitCommand commit = git.commit();
             System.out.println("get commit...");  
             commit.setOnly("someInnerProjectTest/build.gradle"); //aucileblad gayofit unda gadaeces da ara sleshit!
