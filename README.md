@@ -1,5 +1,5 @@
 # AutoVersionInc
-Create and test git pre hook comands
+Create and test git hook commands
 
 Ok so this repo is created to test git hooks and create custom code for some manipulations on with java
 
