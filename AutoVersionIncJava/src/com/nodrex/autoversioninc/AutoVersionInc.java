@@ -27,13 +27,13 @@ public class AutoVersionInc {
         
         if(args == null || args.length <= 0){
             System.out.println(
-                    "Given args are empty or it is not enough: args shoudl be at list 2. first always should be file name(maby full path) which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value shoudl be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enaf args!!!\n"
-                    + "or args shoudl be at list 3. first commit comand to detect that commit is needed, second repo path and third should be file path , which should be commited!!!\n");
+                    "Given args are empty or it is not enough: args should be at list 2. first always should be file name(can be full path) which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value should be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enough args!!!\n"
+                    + "or args should be at list 3. first commit command to detect that commit is needed, second repo path and third should be file path , which should be committed!!!\n");
             System.exit(1);
         }
         if(args[0].equalsIgnoreCase(COMMIT_STR_COMMAND)){
             if(args.length < 3){
-                System.out.println("Given args shoudl be at list 3. first commit comand to detect that commit is needed, second repo path and third should be file path , which should be commited!!!\n");
+                System.out.println("Given args should be at list 3. first commit command to detect that commit is needed, second repo path and third should be file path , which should be committed!!!\n");
                 System.exit(1);
             }
             commitChangedFile(args);
@@ -42,7 +42,7 @@ public class AutoVersionInc {
    
     public static void parsAndIncreasVersion(String args[]) {
         try {
-            System.out.println("Git pre commmit hook started...");
+            System.out.println("Git pre commit hook started...");
             String fileName = args[0];
             System.out.println("file to pars: " + fileName);
             String data = new String(Files.readAllBytes(Paths.get(fileName)));
@@ -54,11 +54,11 @@ public class AutoVersionInc {
             fileOut.close();
 
             System.out.println("given file was repleced with increasd version!");
-            System.out.println("Git pre commmit hook finished :)");
+            System.out.println("Git pre commit hook finished :)");
             System.out.println("continuing commit...");  
             
         } catch (Exception e) {
-            System.out.println("Unfortunately there was some error while trying to pars build gradle file: " + e.toString());
+            System.out.println("Unfortunately there was some error while trying to parse build gradle file: " + e.toString());
             System.exit(1);
         }
     }
@@ -86,9 +86,9 @@ public class AutoVersionInc {
                 } catch (NumberFormatException e) {}
             }
 
-            System.out.println("current vallue: " + value);
+            System.out.println("current value: " + value);
             int newValue = value + 1;
-            System.out.println("new vallue which will be commited: " + newValue);
+            System.out.println("new value which will be commited: " + newValue);
             String newVar = var.replace(String.valueOf(value), String.valueOf(newValue));
             data = data.replace(var, newVar);
         }
@@ -103,7 +103,7 @@ public class AutoVersionInc {
             String file = args[2];
             System.out.println("file: " + file);
             Git git = Git.open(new File(repo));
-            System.out.println("branch: " + git.branchList().call().get(0));
+            System.out.println("branch: " + git.branchList().call().get(0).getName());
             CommitCommand commit = git.commit();
             commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
