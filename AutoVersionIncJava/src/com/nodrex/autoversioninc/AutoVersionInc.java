@@ -77,7 +77,7 @@ public class AutoVersionInc {
 //                }
 //            }).start();
             
-            //commitChangedFile();
+            commitChangedFile();
         } catch (Exception e) {
             System.out.println("Unfortunately there was some error while trying to pars build gradle file: " + e.toString());
             System.exit(1);
