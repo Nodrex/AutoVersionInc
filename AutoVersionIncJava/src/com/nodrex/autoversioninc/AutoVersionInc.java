@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.errors.JGitInternalException;
 
 /**
  * This class is used to parse Android's build.grade file and automatically increase build version numbers.
@@ -99,6 +100,14 @@ public class AutoVersionInc {
             System.out.println("commit message set");
             commit.call();
             System.out.println("commit finished!");
+        }catch (JGitInternalException jgie){
+            System.out.println("Unfortunately problem in commit from java: " + jgie.toString());
+            System.out.println(jgie.getCause().getMessage());
+            System.out.println(jgie.getMessage());
+            System.out.println("stackTrace length: " + jgie.getStackTrace().length);
+            for (StackTraceElement element : jgie.getStackTrace()) {
+                System.out.println(element.getMethodName());
+            }
         } catch (Exception e) {
             System.out.println("Unfortunately problem in commit from java: " + e.toString());
             System.exit(1);
