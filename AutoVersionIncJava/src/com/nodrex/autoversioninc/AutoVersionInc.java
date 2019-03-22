@@ -7,8 +7,10 @@ import java.nio.file.Paths;
 import java.util.Set;
 import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.Status;
 import org.eclipse.jgit.api.errors.JGitInternalException;
+import org.eclipse.jgit.revwalk.RevCommit;
 
 /**
  * This class is used to parse Android's build.grade file and automatically increase build version numbers.
@@ -21,6 +23,7 @@ public class AutoVersionInc {
     public static final String NEW_LINE = "\n";
     public static final String EMPTY_STRING = "";
     public static final String COMMIT_STR_COMMAND = "commit";
+    public static final String SKIP_CI = "[skip ci]";
     
     public static void main(String args[]) {
         //args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"}; //to test parsing and version inc
@@ -102,19 +105,25 @@ public class AutoVersionInc {
         String file = args[2];
         try {
             Git git = Git.open(new File(repo));
+            
+            //check if is enithing to commit
             Status status = git.status().call();
             Set<String> changes = status.getUncommittedChanges();
-            if(changes.size() <= 0) {
-                //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
-                System.exit(0);
+            if(changes.size() <= 0) System.exit(0); //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
+          
+            //check if las commit message has [skip ci]
+            boolean skipCi = false;
+            LogCommand logCommand = git.log();
+            Iterable<RevCommit> commits = logCommand.call();
+            
+            for (RevCommit rc : commits) {
+                if(rc == null) continue;
+                String commitMessage = rc.getFullMessage();
+                if(commitMessage == null) continue;
+                System.err.println("Last commit message: " + commitMessage);
+                skipCi = commitMessage.contains(SKIP_CI);
+                break;
             }
-           
-            /*
-            for (String s : changes) {
-                if(s.equalsIgnoreCase(file)) break;
-                System.out.println(s);
-            }
-            */
             
             System.out.println("post commit started");
             System.out.println("trying to commit file...");
@@ -124,13 +133,16 @@ public class AutoVersionInc {
             commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
             System.out.println("disable pre commit hook");
-            commit.setMessage("increased build version");
+            String commitMessage = "increased build version";
+            if(skipCi) commitMessage += (" " + SKIP_CI);
+            commit.setMessage(commitMessage);
             commit.call();
             System.out.println("commit finished!");
         } catch (JGitInternalException jgie){
             System.out.println("Unfortunately problem in commit from java: " + jgie.toString());
             printData(repo, file);
-            System.out.println(jgie.getCause().getMessage());
+            Throwable cause = jgie.getCause();
+            if(cause != null) System.out.println(cause.getMessage());
             System.out.println(jgie.getMessage());
         } catch (Exception e) {
             System.out.println("Unfortunately problem in commit from java: " + e.toString());
