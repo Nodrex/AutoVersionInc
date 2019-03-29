@@ -3,6 +3,9 @@
 #pre commit git hook which calls java AutoVersionInc.jar to parse buil.gradle and increase versions automatically
 #to call jar file we need full path and for build gradle also need full path
 
+
+cat $1
+
 COMMIT_MSG_FILE=$1
 COMMIT_SOURCE=$2
 SHA1=$3
