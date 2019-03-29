@@ -79,6 +79,9 @@ public class AutoVersionInc {
                     //if commit message contains skip ci, igonore this key and continue with ather key
                     System.out.println("commit message has [skip si], so ignoring " + varName);
                     continue;
+                }else {
+                    varName = varName.substring(1, varName.length()-1);
+                    System.err.println("removing square brases: " + varName);
                 }
             }
             System.out.println("Trying to increase " + varName + " number ...");
