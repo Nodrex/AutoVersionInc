@@ -139,7 +139,7 @@ public class AutoVersionInc {
             commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
             System.out.println("disable pre commit hook");
-            String commitMessage = "App version " + getVersion(args[3], args[4]) + lastCommitMessage;
+            String commitMessage = "App version " + getVersion(args[3], args[4]) + " " + lastCommitMessage;
             commit.setMessage(commitMessage);
             commit.call();
             System.out.println("commit finished!");
