@@ -49,8 +49,8 @@ public class AutoVersionInc {
    
     public static void parsAndIncreasVersion(String args[]) {
         try {
-            System.out.println("Git pre commit hook started...");
-            String fileName = args[0];
+            System.out.println("Git prepare-commit-msg hook started...");
+            String fileName = args[1];
             System.out.println("file to pars: " + fileName);
             String data = new String(Files.readAllBytes(Paths.get(fileName)));
             
@@ -61,9 +61,8 @@ public class AutoVersionInc {
             fileOut.close();
 
             System.out.println("given file was repleced with increasd version!");
-            System.out.println("Git pre commit hook finished :)");
+            System.out.println("Git prepare-commit-msg hook finished :)");
             System.out.println("continuing commit...");  
-            
         } catch (Exception e) {
             System.out.println("Unfortunately there was some error while trying to parse build gradle file: " + e.toString());
             System.exit(1);
@@ -71,36 +70,23 @@ public class AutoVersionInc {
     }
     
     private static String go(String data, String args[]) throws IOException, GitAPIException {
-        Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
+        Git git = Git.open(new File(args[0]));
         boolean skipCi = hasSkipCiInCommitMessage(git);
-        for (int i= 1; i< args.length; i++) {
+        for (int i= 2; i< args.length; i++) {
             String varName = args[i];
             if(varName.contains("[") && varName.contains("]")){
                 if(skipCi) {
                     //if commit message contains skip ci, igonore this key and continue with ather key
-                    System.out.print("commit message has skip si, so ignoring " + varName);
+                    System.out.println("commit message has [skip si], so ignoring " + varName);
                     continue;
                 }
             }
             System.out.println("Trying to increase " + varName + " number ...");
-            int index = data.indexOf(varName);
-            if(index < 0) {
-                System.out.println("Can not find " + varName + " in file, so skipping" );
-                continue;
-            }
-            String var = data.substring(index);
-            var = var.substring(0, var.indexOf(NEW_LINE));
-
-            int lastIndex = var.length();
-            int value = 0;
-            for (int j = var.length() - 4; j < lastIndex; j++) {
-                try {
-                    String sub = var.substring(j, lastIndex - 1);
-                    sub = sub.trim();
-                    value = Integer.valueOf(sub);
-                    break;
-                } catch (NumberFormatException e) {}
-            }
+            
+            String var = getStrVariable(data, varName);
+            if(var == null) continue;
+            int value = getVariable(var);
+            if(value < 0) continue;
 
             System.out.println("current value: " + value);
             int newValue = value + 1;
@@ -111,12 +97,40 @@ public class AutoVersionInc {
         return data;
     }
     
+    private static String getStrVariable(String data, String varName){
+        int index = data.indexOf(varName);
+        if(index < 0) {
+            System.out.println("Can not find " + varName + " in file, so skipping" );
+            return null;
+        }
+        String var = data.substring(index);
+        return var.substring(0, var.indexOf(NEW_LINE));
+    }
+    
+    private static int getVariable(String var){
+        if(var == null) return -1;
+        int lastIndex = var.length();
+        for (int j = var.length() - 4; j < lastIndex; j++) {
+            try {
+                String sub = var.substring(j, lastIndex - 1);
+                sub = sub.trim();
+                return Integer.valueOf(sub);
+            } catch (NumberFormatException e) {}
+        }
+        return -1;
+    }
+    
+    private static int getVersion(String fileName, String varName) throws IOException{
+        String data = new String(Files.readAllBytes(Paths.get(fileName)));
+        return getVariable(getStrVariable(data, varName));
+    }
+    
     private static void commitChangedFile(String[] args){
         String repo = args[1];
         String file = args[2];
         try {
             Git git = Git.open(new File(repo));
-            boolean skipCi = hasSkipCiInCommitMessage(git);
+            String lastCommitMessage = getLastCommitMessage(git);
             System.out.println("post commit started");
             System.out.println("trying to commit file...");
             printData(repo, file);
@@ -125,8 +139,7 @@ public class AutoVersionInc {
             commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
             System.out.println("disable pre commit hook");
-            String commitMessage = "increased build version";
-            if(skipCi) commitMessage += (" " + SKIP_CI);
+            String commitMessage = "App version " + getVersion(args[3], args[4]) + lastCommitMessage;
             commit.setMessage(commitMessage);
             commit.call();
             System.out.println("commit finished!");
@@ -143,25 +156,28 @@ public class AutoVersionInc {
     }
     
     private static boolean hasSkipCiInCommitMessage(Git git) throws GitAPIException{
+        String lastCommitMessage = getLastCommitMessage(git);
+        if(lastCommitMessage == null) return false;
+        return lastCommitMessage.contains(SKIP_CI);
+    }
+    
+    private static String getLastCommitMessage(Git git) throws GitAPIException{
         //check if is enithing to commit
-            Status status = git.status().call();
-            Set<String> changes = status.getUncommittedChanges();
-            if(changes.size() <= 0) System.exit(0); //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
-          
-            //check if las commit message has [skip ci]
-            boolean skipCi = false;
-            LogCommand logCommand = git.log();
-            Iterable<RevCommit> commits = logCommand.call();
-            
-            for (RevCommit rc : commits) {
-                if(rc == null) continue;
-                String commitMessage = rc.getFullMessage();
-                if(commitMessage == null) continue;
-                System.err.println("Last commit message: " + commitMessage);
-                skipCi = commitMessage.contains(SKIP_CI);
-                break;
-            }
-            return skipCi;
+        Status status = git.status().call();
+        Set<String> changes = status.getUncommittedChanges();
+        if(changes.size() <= 0) System.exit(0); //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
+
+        LogCommand logCommand = git.log();
+        Iterable<RevCommit> commits = logCommand.call();
+
+        for (RevCommit rc : commits) {
+            if(rc == null) continue;
+            String commitMessage = rc.getFullMessage();
+            if(commitMessage == null) continue;
+            System.err.println("Last commit message: " + commitMessage);
+            return commitMessage;
+        }
+        return null;
     }
     
     private static void printData(String repo, String file){
