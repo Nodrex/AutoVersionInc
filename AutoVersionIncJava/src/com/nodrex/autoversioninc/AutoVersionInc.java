@@ -2,6 +2,7 @@ package com.nodrex.autoversioninc;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Set;
@@ -9,6 +10,7 @@ import org.eclipse.jgit.api.CommitCommand;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.LogCommand;
 import org.eclipse.jgit.api.Status;
+import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.revwalk.RevCommit;
 
@@ -68,9 +70,18 @@ public class AutoVersionInc {
         }
     }
     
-    private static String go(String data, String args[]) {
+    private static String go(String data, String args[]) throws IOException, GitAPIException {
+        Git git = Git.open(new File("F:\\netbeansPorjects\\AutoVersionInc"));
+        boolean skipCi = hasSkipCiInCommitMessage(git);
         for (int i= 1; i< args.length; i++) {
-            String varName = args[i]; 
+            String varName = args[i];
+            if(varName.contains("[") && varName.contains("]")){
+                if(skipCi) {
+                    //if commit message contains skip ci, igonore this key and continue with ather key
+                    System.out.print("commit message has skip si, so ignoring " + varName);
+                    continue;
+                }
+            }
             System.out.println("Trying to increase " + varName + " number ...");
             int index = data.indexOf(varName);
             if(index < 0) {
@@ -105,26 +116,7 @@ public class AutoVersionInc {
         String file = args[2];
         try {
             Git git = Git.open(new File(repo));
-            
-            //check if is enithing to commit
-            Status status = git.status().call();
-            Set<String> changes = status.getUncommittedChanges();
-            if(changes.size() <= 0) System.exit(0); //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
-          
-            //check if las commit message has [skip ci]
-            boolean skipCi = false;
-            LogCommand logCommand = git.log();
-            Iterable<RevCommit> commits = logCommand.call();
-            
-            for (RevCommit rc : commits) {
-                if(rc == null) continue;
-                String commitMessage = rc.getFullMessage();
-                if(commitMessage == null) continue;
-                System.err.println("Last commit message: " + commitMessage);
-                skipCi = commitMessage.contains(SKIP_CI);
-                break;
-            }
-            
+            boolean skipCi = hasSkipCiInCommitMessage(git);
             System.out.println("post commit started");
             System.out.println("trying to commit file...");
             printData(repo, file);
@@ -148,6 +140,28 @@ public class AutoVersionInc {
             System.out.println("Unfortunately problem in commit from java: " + e.toString());
             printData(repo, file);
         }
+    }
+    
+    private static boolean hasSkipCiInCommitMessage(Git git) throws GitAPIException{
+        //check if is enithing to commit
+            Status status = git.status().call();
+            Set<String> changes = status.getUncommittedChanges();
+            if(changes.size() <= 0) System.exit(0); //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
+          
+            //check if las commit message has [skip ci]
+            boolean skipCi = false;
+            LogCommand logCommand = git.log();
+            Iterable<RevCommit> commits = logCommand.call();
+            
+            for (RevCommit rc : commits) {
+                if(rc == null) continue;
+                String commitMessage = rc.getFullMessage();
+                if(commitMessage == null) continue;
+                System.err.println("Last commit message: " + commitMessage);
+                skipCi = commitMessage.contains(SKIP_CI);
+                break;
+            }
+            return skipCi;
     }
     
     private static void printData(String repo, String file){
