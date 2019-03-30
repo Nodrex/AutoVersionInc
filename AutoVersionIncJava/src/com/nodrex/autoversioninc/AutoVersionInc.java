@@ -28,6 +28,7 @@ public class AutoVersionInc {
     public static final String SKIP_CI = "[skip ci]";
     
     public static void main(String args[]) {
+        //testing 0
         //args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"}; //to test parsing and version inc
         //args = new String[]{"commit", "F:\\netbeansPorjects\\AutoVersionInc", "someInnerProjectTest/build.gradle"}; //to test commit from git
         //abouv code is for testing purposes only and shoudl be commented on prod version
