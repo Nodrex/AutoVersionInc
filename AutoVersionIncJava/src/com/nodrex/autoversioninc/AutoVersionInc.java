@@ -71,7 +71,7 @@ public class AutoVersionInc {
     
     private static String go(String data, String args[]) throws IOException, GitAPIException {
         //Git git = Git.open(new File(args[0]));
-        System.err.println("current commit message" + args[0]);
+        System.err.println("current commit message: " + args[0]);
         boolean skipCi = false; //hasSkipCiInCommitMessage(git);
         for (int i= 2; i< args.length; i++) {
             String varName = args[i];
