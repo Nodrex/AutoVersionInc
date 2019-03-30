@@ -21,7 +21,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
  * @since 2019
  */
 public class AutoVersionInc {
-    
+   
     public static final String NEW_LINE = "\n";
     public static final String EMPTY_STRING = "";
     public static final String COMMIT_STR_COMMAND = "commit";
@@ -32,15 +32,15 @@ public class AutoVersionInc {
         //args = new String[]{"commit", "F:\\netbeansPorjects\\AutoVersionInc", "someInnerProjectTest/build.gradle"}; //to test commit from git
         //abouv code is for testing purposes only and shoudl be commented on prod version
         
-        if(args == null || args.length <= 0){
-            System.out.println(
-                    "Given args are empty or it is not enough: args should be at list 2. first always should be file name(can be full path) which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value should be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enough args!!!\n"
-                    + "or args should be at list 3. first commit command to detect that commit is needed, second repo path and third should be file path , which should be committed!!!\n");
+        if(args == null || args.length <= 3){
+            System.out.println(ConsoleColors.RED +
+                    "Given args are empty or it is not enough: args should be at list 3. first always should be $1 to get file location where last commit message is. Second always should be file name(can be full path) which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value should be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enough args!!!\n"
+                    + "or args should be at list 3. first commit command to detect that commit is needed, second repo path and third should be file path , which should be committed!!!\n" + ConsoleColors.RESET);
             System.exit(1);
         }
         if(args[0].equalsIgnoreCase(COMMIT_STR_COMMAND)){
             if(args.length < 3){
-                System.out.println("Given args should be at list 3. first commit command to detect that commit is needed, second repo path and third should be file path , which should be committed!!!\n");
+                System.out.println(ConsoleColors.RED + "Given args should be at list 3. first commit command to detect that commit is needed, second repo path and third should be file path , which should be committed!!!\n" + ConsoleColors.RESET);
                 System.exit(1);
             }
             commitChangedFile(args);
@@ -60,9 +60,9 @@ public class AutoVersionInc {
             fileOut.write(data.getBytes());
             fileOut.close();
 
-            System.out.println("given file was repleced with increasd version!");
+            System.out.println(ConsoleColors.GREEN + "given file was repleced with increasd version!" + ConsoleColors.RESET);
         } catch (Exception e) {
-            System.out.println("Unfortunately there was some error while trying to parse build gradle file: " + e.toString());
+            System.out.println(ConsoleColors.RED + "Unfortunately there was some error while trying to parse build gradle file: " + e.toString() + ConsoleColors.RESET);
             System.exit(1);
         }
     }
@@ -127,6 +127,7 @@ public class AutoVersionInc {
     }
     
     private static void commitChangedFile(String[] args){
+        System.out.println(NEW_LINE);
         String repo = args[1];
         String file = args[2];
         try {
@@ -136,7 +137,7 @@ public class AutoVersionInc {
             System.out.println("trying to commit file...");
             printData(repo, file);
             System.out.println("branch: " + git.getRepository().getBranch());
-            System.err.println("Last commit message: " + lastCommitMessage);
+            System.err.println("Last commit message: " + lastCommitMessage.replace(NEW_LINE, ""));
             CommitCommand commit = git.commit();
             commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
@@ -144,15 +145,15 @@ public class AutoVersionInc {
             String commitMessage = "App version " + getVersion(args[3], args[4]) + " " + lastCommitMessage;
             commit.setMessage(commitMessage);
             commit.call();
-            System.out.println("commit finished!");
+            System.out.println(ConsoleColors.GREEN + "commit finished!" + ConsoleColors.RESET);
         } catch (JGitInternalException jgie){
-            System.out.println("Unfortunately problem in commit from java: " + jgie.toString());
+            System.out.println(ConsoleColors.RED + "Unfortunately problem in commit from java: " + jgie.toString());
             printData(repo, file);
             Throwable cause = jgie.getCause();
             if(cause != null) System.out.println(cause.getMessage());
-            System.out.println(jgie.getMessage());
+            System.out.println(jgie.getMessage() + ConsoleColors.RESET);
         } catch (Exception e) {
-            System.out.println("Unfortunately problem in commit from java: " + e.toString());
+            System.out.println(ConsoleColors.RED + "Unfortunately problem in commit from java: " + e.toString() + ConsoleColors.RESET);
             printData(repo, file);
         }
     }
