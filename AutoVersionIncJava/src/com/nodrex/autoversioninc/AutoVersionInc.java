@@ -28,7 +28,7 @@ public class AutoVersionInc {
     public static final String SKIP_CI = "[skip ci]";
     
     public static void main(String args[]) {
-        //args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"}; //to test parsing and version inc
+        //args = new String[]{".git/COMMIT_EDITMSG", "F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"}; //to test parsing and version inc
         //args = new String[]{"commit", "F:\\netbeansPorjects\\AutoVersionInc", "someInnerProjectTest/build.gradle"}; //to test commit from git
         //abouv code is for testing purposes only and shoudl be commented on prod version
         
@@ -49,12 +49,12 @@ public class AutoVersionInc {
    
     public static void parsAndIncreasVersion(String args[]) {
         try {
-            System.out.println("Git prepare-commit-msg hook started...");
+            System.out.println("Git commit-msg hook started...");
             String fileName = args[1];
             System.out.println("file to pars: " + fileName);
             String data = new String(Files.readAllBytes(Paths.get(fileName)));
             
-            data = go(data, args);
+            data = increasVersion(data, args);
 
             FileOutputStream fileOut = new FileOutputStream(new File(fileName));
             fileOut.write(data.getBytes());
@@ -69,12 +69,9 @@ public class AutoVersionInc {
         }
     }
     
-    private static String go(String data, String args[]) throws IOException, GitAPIException {
-        //Git git = Git.open(new File(args[0]));
-        System.out.println("current commit message file: " + args[0]);
-        String tmp = new String(Files.readAllBytes(Paths.get(args[0])));
-        System.out.println("current commit message: " + tmp);
-        boolean skipCi = false; //hasSkipCiInCommitMessage(git);
+    private static String increasVersion(String data, String args[]) throws IOException, GitAPIException {
+        String lastCommitMessage = new String(Files.readAllBytes(Paths.get(args[0])));
+        boolean skipCi = lastCommitMessage.contains(SKIP_CI);
         for (int i= 2; i< args.length; i++) {
             String varName = args[i];
             if(varName.contains("[") && varName.contains("]")){
@@ -84,7 +81,7 @@ public class AutoVersionInc {
                     continue;
                 }else {
                     varName = varName.substring(1, varName.length()-1);
-                    System.err.println("removing square brases: " + varName);
+                    System.err.println("last commit message does not contains [skip ci], so removing square brases to: " + varName);
                 }
             }
             System.out.println("Trying to increase " + varName + " number ...");
@@ -159,12 +156,6 @@ public class AutoVersionInc {
             System.out.println("Unfortunately problem in commit from java: " + e.toString());
             printData(repo, file);
         }
-    }
-    
-    private static boolean hasSkipCiInCommitMessage(Git git) throws GitAPIException{
-        String lastCommitMessage = getLastCommitMessage(git);
-        if(lastCommitMessage == null) return false;
-        return lastCommitMessage.contains(SKIP_CI);
     }
     
     private static String getLastCommitMessage(Git git) throws GitAPIException{
