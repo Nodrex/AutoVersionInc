@@ -61,8 +61,6 @@ public class AutoVersionInc {
             fileOut.close();
 
             System.out.println("given file was repleced with increasd version!");
-            System.out.println("Git prepare-commit-msg hook finished :)");
-            System.out.println("continuing commit...");  
         } catch (Exception e) {
             System.out.println("Unfortunately there was some error while trying to parse build gradle file: " + e.toString());
             System.exit(1);
@@ -138,6 +136,7 @@ public class AutoVersionInc {
             System.out.println("trying to commit file...");
             printData(repo, file);
             System.out.println("branch: " + git.getRepository().getBranch());
+            System.err.println("Last commit message: " + lastCommitMessage);
             CommitCommand commit = git.commit();
             commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
@@ -171,7 +170,6 @@ public class AutoVersionInc {
             if(rc == null) continue;
             String commitMessage = rc.getFullMessage();
             if(commitMessage == null) continue;
-            System.err.println("Last commit message: " + commitMessage);
             return commitMessage;
         }
         return null;
