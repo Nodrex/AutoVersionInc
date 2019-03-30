@@ -28,7 +28,6 @@ public class AutoVersionInc {
     public static final String SKIP_CI = "[skip ci]";
     
     public static void main(String args[]) {
-        //testing 0
         //args = new String[]{"F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"}; //to test parsing and version inc
         //args = new String[]{"commit", "F:\\netbeansPorjects\\AutoVersionInc", "someInnerProjectTest/build.gradle"}; //to test commit from git
         //abouv code is for testing purposes only and shoudl be commented on prod version
@@ -71,8 +70,9 @@ public class AutoVersionInc {
     }
     
     private static String go(String data, String args[]) throws IOException, GitAPIException {
-        Git git = Git.open(new File(args[0]));
-        boolean skipCi = hasSkipCiInCommitMessage(git);
+        //Git git = Git.open(new File(args[0]));
+        System.err.println("current commit message" + args[0]);
+        boolean skipCi = false; //hasSkipCiInCommitMessage(git);
         for (int i= 2; i< args.length; i++) {
             String varName = args[i];
             if(varName.contains("[") && varName.contains("]")){
