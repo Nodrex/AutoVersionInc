@@ -26,6 +26,7 @@ public class AutoVersionInc {
     public static final String EMPTY_STRING = "";
     public static final String COMMIT_STR_COMMAND = "commit";
     public static final String SKIP_CI = "[skip ci]";
+    public static final String QUOTATION = "\"";
     
     public static void main(String args[]) {
         //args = new String[]{".git/COMMIT_EDITMSG", "F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\build.gradle", "versionBuild", "aztelekomVersionCode"}; //to test parsing and version inc
@@ -125,8 +126,8 @@ public class AutoVersionInc {
         String data = new String(Files.readAllBytes(Paths.get(fileName)));
         int version = getVariable(getStrVariable(data, versionKey));
         String versionName = getStrVariable(data, versionNameKey);
-        int startIndex = versionName.indexOf("\"");
-        int lastIndex = versionName.lastIndexOf("\n");
+        int startIndex = versionName.indexOf(QUOTATION);
+        int lastIndex = versionName.lastIndexOf(QUOTATION);
         System.err.println("versionName: " + versionName + " , " + startIndex + " , " + lastIndex);
         versionName = versionName.substring(startIndex, lastIndex);
         return versionName + version;
