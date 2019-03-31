@@ -123,11 +123,12 @@ public class AutoVersionInc {
     
     private static String getVersion(String fileName, String versionKey, String versionNameKey) throws IOException{
         String data = new String(Files.readAllBytes(Paths.get(fileName)));
-        System.out.println("data: " + NEW_LINE + data);
         int version = getVariable(getStrVariable(data, versionKey));
-        System.err.println("version: " + version);
         String versionName = getStrVariable(data, versionNameKey);
-        System.err.println("versionName: " + versionName);
+        int startIndex = versionName.indexOf("\"");
+        int lastIndex = versionName.lastIndexOf("\n");
+        System.err.println("versionName: " + versionName + " , " + startIndex + " , " + lastIndex);
+        versionName = versionName.substring(startIndex, lastIndex);
         return versionName + version;
     }
     
@@ -148,7 +149,7 @@ public class AutoVersionInc {
             commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
             System.out.println("disable pre commit hook");
-            String commitMessage = "App version " + getVersion(file, args[3], args[4]) + " " + lastCommitMessage;
+            String commitMessage = "App version: " + getVersion(file, args[3], args[4]) + " " + lastCommitMessage;
             commit.setMessage(commitMessage);
             commit.call();
             System.out.println(ConsoleColors.GREEN + "commit finished!" + ConsoleColors.RESET);
