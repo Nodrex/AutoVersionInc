@@ -35,12 +35,12 @@ public class AutoVersionInc {
         if(args == null || args.length <= 3){
             System.out.println(ConsoleColors.RED +
                     "Given args are empty or it is not enough: args should be at list 3. first always should be $1 to get file location where last commit message is. Second always should be file name(can be full path) which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value should be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enough args!!!\n"
-                    + "or args should be at list 3. first commit command to detect that commit is needed, second repo path and third should be file path , which should be committed!!!\n" + ConsoleColors.RESET);
+                    + "or args should be at list 5. first commit command to detect that commit is needed, second repo path and third should be file path , which should be parsed to read version code and name and committed, 4 should be version code key and 5 should be version name to read!!!\n" + ConsoleColors.RESET);
             System.exit(1);
         }
         if(args[0].equalsIgnoreCase(COMMIT_STR_COMMAND)){
-            if(args.length < 3){
-                System.out.println(ConsoleColors.RED + "Given args should be at list 3. first commit command to detect that commit is needed, second repo path and third should be file path , which should be committed!!!\n" + ConsoleColors.RESET);
+            if(args.length < 5){
+                System.out.println(ConsoleColors.RED + "Given args should be at list 5. first commit command to detect that commit is needed, second repo path and third should be file path , which should be parsed to read version code and name and committed, 4 should be version code key and 5 should be version name to read!!!\n" + ConsoleColors.RESET);
                 System.exit(1);
             }
             commitChangedFile(args);
@@ -121,9 +121,14 @@ public class AutoVersionInc {
         return -1;
     }
     
-    private static int getVersion(String fileName, String varName) throws IOException{
+    private static String getVersion(String fileName, String versionKey, String versionNameKey) throws IOException{
         String data = new String(Files.readAllBytes(Paths.get(fileName)));
-        return getVariable(getStrVariable(data, varName));
+        System.out.println("data: " + NEW_LINE + data);
+        int version = getVariable(getStrVariable(data, versionKey));
+        System.err.println("version: " + version);
+        String versionName = getStrVariable(data, versionNameKey);
+        System.err.println("versionName: " + versionName);
+        return versionName + version;
     }
     
     private static void commitChangedFile(String[] args){
@@ -137,12 +142,13 @@ public class AutoVersionInc {
             System.out.println("trying to commit file...");
             printData(repo, file);
             System.out.println("branch: " + git.getRepository().getBranch());
-            System.err.println("Last commit message: " + lastCommitMessage.replace(NEW_LINE, ""));
+            lastCommitMessage = lastCommitMessage.replace(NEW_LINE, "");
+            System.err.println("Last commit message: " + lastCommitMessage);
             CommitCommand commit = git.commit();
             commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
             System.out.println("disable pre commit hook");
-            String commitMessage = "App version " + getVersion(args[3], args[4]) + " " + lastCommitMessage;
+            String commitMessage = "App version " + getVersion(file, args[3], args[4]) + " " + lastCommitMessage;
             commit.setMessage(commitMessage);
             commit.call();
             System.out.println(ConsoleColors.GREEN + "commit finished!" + ConsoleColors.RESET);

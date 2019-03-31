@@ -6,4 +6,6 @@ android {
     def versionBuild = 513
     def aztelekomVersionCode = 222
 
+	versionName "1.0." + versionBuild
+	
 }

@@ -6,10 +6,12 @@
 
 # 1) is path to jar file
 # 2) commit command (to use commit functionality)
-# 2) git repo path
-# 3) path to file, which should be commited
+# 3) git repo path
+# 4) path to file, which should be parsed to get app version and then commited
+# 5) build version key
+# 6) build version name key
 
-java -jar F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\AutoVersionInc.jar commit F:\\netbeansPorjects\\AutoVersionInc someInnerProjectTest/build.gradle
+java -jar F:\\netbeansPorjects\\AutoVersionInc\\someInnerProjectTest\\AutoVersionInc.jar commit F:\\netbeansPorjects\\AutoVersionInc someInnerProjectTest/build.gradle versionBuild versionName
 exit 0
 
 
