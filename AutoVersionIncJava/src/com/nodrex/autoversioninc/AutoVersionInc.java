@@ -33,7 +33,7 @@ public class AutoVersionInc {
         //args = new String[]{"commit", "F:\\netbeansPorjects\\AutoVersionInc", "someInnerProjectTest/build.gradle"}; //to test commit from git
         //abouv code is for testing purposes only and shoudl be commented on prod version
         
-        if(args == null || args.length <= 3){
+        if(args == null || args.length < 3){
             System.out.println(ConsoleColors.RED +
                     "Given args are empty or it is not enough: args should be at list 3. first always should be $1 to get file location where last commit message is. Second always should be file name(can be full path) which should be parsed, other args shouldl be variable names like(versionBuild or aztelekomVersionCode or both) which value should be increasd (they should be represented in format key == value), so keep in mind that and try again with correct or enough args!!!\n"
                     + "or args should be at list 5. first commit command to detect that commit is needed, second repo path and third should be file path , which should be parsed to read version code and name and committed, 4 should be version code key and 5 should be version name to read!!!\n" + ConsoleColors.RESET);
@@ -148,8 +148,9 @@ public class AutoVersionInc {
             CommitCommand commit = git.commit();
             commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
             commit.setNoVerify(true);
-            System.out.println("disable pre commit hook");
-            String commitMessage = "App version: [" + getVersion(file, args[3], args[4]) + "] " + lastCommitMessage;
+            System.out.println("disable commit-msg hook");
+            boolean hasSkipCi = lastCommitMessage != null && lastCommitMessage.contains(SKIP_CI);
+            String commitMessage = "App version: " + getVersion(file, args[3], args[4]) + " " + (hasSkipCi ? SKIP_CI : "");
             commit.setMessage(commitMessage);
             commit.call();
             System.out.println(ConsoleColors.GREEN + "commit finished!" + ConsoleColors.RESET);
