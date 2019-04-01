@@ -60,7 +60,6 @@ public class AutoVersionInc {
             FileOutputStream fileOut = new FileOutputStream(new File(fileName));
             fileOut.write(data.getBytes());
             fileOut.close();
-
             System.out.println(ConsoleColors.GREEN + "given file was repleced with increasd version!" + ConsoleColors.RESET);
         } catch (Exception e) {
             System.out.println(ConsoleColors.RED + "Unfortunately there was some error while trying to parse build gradle file: " + e.toString() + ConsoleColors.RESET);
