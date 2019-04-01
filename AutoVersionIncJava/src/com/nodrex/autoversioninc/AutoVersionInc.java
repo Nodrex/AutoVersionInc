@@ -146,7 +146,7 @@ public class AutoVersionInc {
             lastCommitMessage = lastCommitMessage.replace(NEW_LINE, "");
             System.err.println("Last commit message: " + lastCommitMessage);
             CommitCommand commit = git.commit();
-            commit.setOnly(file); //aucileblad gayofit unda gadaeces da ara sleshit!
+            commit.setOnly(file);
             commit.setNoVerify(true);
             System.out.println("disable commit-msg hook");
             boolean hasSkipCi = lastCommitMessage != null && lastCommitMessage.contains(SKIP_CI);
