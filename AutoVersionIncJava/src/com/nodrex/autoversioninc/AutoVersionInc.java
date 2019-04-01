@@ -170,7 +170,11 @@ public class AutoVersionInc {
         //check if is enithing to commit
         Status status = git.status().call();
         Set<String> changes = status.getUncommittedChanges();
-        if(changes.size() <= 0) System.exit(0); //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
+        if(changes.size() <= 0) {
+            System.out.println("nothing to commit!");
+            System.exit(0);
+            //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
+        } 
 
         LogCommand logCommand = git.log();
         Iterable<RevCommit> commits = logCommand.call();
