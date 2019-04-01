@@ -133,14 +133,11 @@ public class AutoVersionInc {
     }
     
     private static void commitChangedFile(String[] args){
-        System.out.println("commitChangedFile");
         System.out.println(NEW_LINE);
         String repo = args[1];
         String file = args[2];
         try {
-            System.out.println("trying to pen repo");
             Git git = Git.open(new File(repo));
-            System.out.println("repo was open");
             String lastCommitMessage = getLastCommitMessage(git);
             System.out.println("post commit started");
             System.out.println("trying to commit file...");
@@ -173,12 +170,10 @@ public class AutoVersionInc {
         //check if is enithing to commit
         Status status = git.status().call();
         Set<String> changes = status.getUncommittedChanges();
-        System.out.println("changes: " + changes.size());
         if(changes.size() <= 0) {
-            System.out.println("nothing to commit!");
             System.exit(0);
             //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
-        } 
+        }else System.out.println(ConsoleColors.YELLOW +  "trying to commit file" + ConsoleColors.RESET);
 
         LogCommand logCommand = git.log();
         Iterable<RevCommit> commits = logCommand.call();
