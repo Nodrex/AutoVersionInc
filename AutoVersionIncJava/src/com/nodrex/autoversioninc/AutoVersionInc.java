@@ -24,6 +24,7 @@ public class AutoVersionInc {
    
     public static final String NEW_LINE = "\n";
     public static final String EMPTY_STRING = "";
+    public static final String SPACE = " ";
     public static final String COMMIT_STR_COMMAND = "commit";
     public static final String SKIP_CI = "[skip ci]";
     public static final String QUOTATION = "\"";
@@ -79,7 +80,7 @@ public class AutoVersionInc {
                     continue;
                 }else {
                     varName = varName.substring(1, varName.length()-1);
-                    System.err.println("last commit message does not contains [skip ci], so removing square brases to: " + varName);
+                    System.out.println("last commit message does not contains [skip ci], so removing square brases to: " + varName);
                 }
             }
             System.out.println("Trying to increase " + varName + " number ...");
@@ -138,18 +139,17 @@ public class AutoVersionInc {
         try {
             Git git = Git.open(new File(repo));
             String lastCommitMessage = getLastCommitMessage(git);
-            System.out.println("post commit started");
-            System.out.println("trying to commit file...");
-            printData(repo, file);
-            System.out.println("branch: " + git.getRepository().getBranch());
-            lastCommitMessage = lastCommitMessage.replace(NEW_LINE, "");
-            System.err.println("Last commit message: " + lastCommitMessage);
+            System.out.println(ConsoleColors.YELLOW +  "Post commit started, trying to commit " + file + SPACE + "..." + ConsoleColors.RESET);
+            System.out.println("repo: " + repo);
+            System.out.println("branch: " + git.getRepository().getBranch() + NEW_LINE);
+            lastCommitMessage = lastCommitMessage.replace(NEW_LINE, EMPTY_STRING);
+            System.out.println("Last commit message: " + lastCommitMessage);
             CommitCommand commit = git.commit();
             commit.setOnly(file);
             commit.setNoVerify(true);
             System.out.println("disable commit-msg hook");
             boolean hasSkipCi = lastCommitMessage != null && lastCommitMessage.contains(SKIP_CI);
-            String commitMessage = "App version: " + getVersion(file, args[3], args[4]) + " " + (hasSkipCi ? SKIP_CI : "");
+            String commitMessage = "App version: " + getVersion(file, args[3], args[4]) + SPACE + (hasSkipCi ? SKIP_CI : EMPTY_STRING);
             commit.setMessage(commitMessage);
             commit.call();
             System.out.println(ConsoleColors.GREEN + "commit finished!" + ConsoleColors.RESET);
@@ -169,11 +169,8 @@ public class AutoVersionInc {
         //check if is enithing to commit
         Status status = git.status().call();
         Set<String> changes = status.getUncommittedChanges();
-        if(changes.size() <= 0) {
-            System.exit(0);
-            //there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
-        }else System.out.println(ConsoleColors.YELLOW +  "trying to commit file" + ConsoleColors.RESET);
-
+        if(changes.size() <= 0) System.exit(0);//there is no files to commit and probably this code was called from second post commit hook, which shouldb ignored!
+       
         LogCommand logCommand = git.log();
         Iterable<RevCommit> commits = logCommand.call();
 
