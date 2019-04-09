@@ -139,9 +139,9 @@ public class AutoVersionInc {
         try {
             Git git = Git.open(new File(repo));
             String lastCommitMessage = getLastCommitMessage(git);
-            System.out.println(ConsoleColors.YELLOW +  "Post commit started, trying to commit " + file + SPACE + "..." + ConsoleColors.RESET);
+            System.out.println(ConsoleColors.YELLOW +  "Post commit started, trying to commit " + file + SPACE + ConsoleColors.RESET);
             System.out.println("repo: " + repo);
-            System.out.println("branch: " + git.getRepository().getBranch() + NEW_LINE);
+            System.out.println("branch: " + git.getRepository().getBranch());
             lastCommitMessage = lastCommitMessage.replace(NEW_LINE, EMPTY_STRING);
             System.out.println("Last commit message: " + lastCommitMessage);
             CommitCommand commit = git.commit();
